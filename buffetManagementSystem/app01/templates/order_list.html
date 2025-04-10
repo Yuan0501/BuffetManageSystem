@@ -1,0 +1,71 @@
+{%  extends 'layout.html' %}
+
+{% block content %}
+     <div class="container">
+        <div style="margin-bottom: 10px" class="clearfix">
+            <a class="btn btn-success" href="/order/add/">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                New Order
+            </a>
+            <div style="float: right; width:300px">
+                <form method="get">
+                     <div class="input-group">
+
+                          <input type="text" name="q" class="form-control" placeholder="Table Number" value="{{ search_data }}">
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                          </span>
+
+                    </div>
+                </form><!-- /input-group -->
+
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+
+          <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+
+            Order List
+      </div>
+      <!-- Table -->
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+              <th>Table Number</th>
+              <th>Server Name</th>
+              <th>Item</th>
+              <th>item Number</th>
+              <th>Price/Item</th>
+              <th>Status</th>
+              <th>Operation</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for obj in queryset %}
+          <tr>
+              <th>{{ obj.tableNum }}</th>
+              <th>{{ obj.serverId.name }}</th>
+              <th>{{ obj.item.get_item_display }}</th>
+              <th>{{ obj.itemNum }}</th>
+              <th>{{ obj.item.itemPrice}}</th>
+              <th>{{ obj.get_status_display }}</th>
+
+
+            <td>
+                <a class="btn btn-primary btn-xs" href="/order/{{ obj.id }}/edit/">Edit</a>
+                <a class="btn btn-danger btn-xs" href="/order/{{ obj.id }}/delete/">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+    </div>
+
+{% endblock %}
