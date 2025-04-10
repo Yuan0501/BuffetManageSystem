@@ -1,0 +1,62 @@
+{%  extends 'layout.html' %}
+
+{% block content %}
+     <div class="container">
+        <div style="margin-bottom: 10px" class="clearfix">
+            <a class="btn btn-success" href="/price/add/">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                New Item
+            </a>
+            <div style="float: right; width:300px">
+                <form method="get">
+                     <div class="input-group">
+
+                          <input type="text" name="q" class="form-control" placeholder="Item Name" value="{{ search_data }}">
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                          </span>
+
+                    </div>
+                </form><!-- /input-group -->
+
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+
+          <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+
+             Item List
+      </div>
+      <!-- Table -->
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+              <th>Item</th>
+              <th>Price</th>
+              <th>Operation</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for obj in queryset %}
+          <tr>
+              <th>{{ obj.get_item_display }}</th>
+              <th>{{ obj.itemPrice }}</th>
+
+            <td>
+                <a class="btn btn-primary btn-xs" href="/price/{{ obj.id }}/edit/">Edit</a>
+                <a class="btn btn-danger btn-xs" href="/price/{{ obj.id }}/delete/">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+    </div>
+
+{% endblock %}

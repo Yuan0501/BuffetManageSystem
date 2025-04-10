@@ -32,5 +32,20 @@ urlpatterns = [
     path('user/<int:nid>/edit/', views.user_edit),
     path('user/<int:nid>/delete/', views.user_delete),
 
+    path('order/list/', views.order_list),
+    path('order/add/', views.order_add),
+
+    path('order/<int:nid>/edit/', views.order_edit),
+
+    path('order/<int:nid>/delete/', views.order_delete),
+    path('price/list/', views.price_list),
+    path('price/add/', views.price_add),
+
+    path('price/<int:nid>/edit/', views.price_edit),
+
+    path('price/<int:nid>/delete/', views.price_delete),
+
+    path('get_price/<int:item_id>/', views.get_price, name='get_price'),
+
 ]
 

@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">New Order</h3>
+          </div>
+          <div class="panel-body">
+            <form method="post" novalidate>
+                 {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    <span style="color: red">{{ field.errors.0 }}</span>
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+        </div>
+    </div>
+      <script>
+        // 当 item 下拉框变化时，自动填充 price
+        document.getElementById("id_item").addEventListener("change", function() {
+            var itemId = this.value;
+            var priceField = document.getElementById("id_price");
+
+            if (itemId) {
+                fetch(`/get_price/${itemId}/`)  // 调用视图来获取对应的价格
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.price) {
+                            priceField.value = data.price;  // 设置 price 字段的值
+                        }
+                    });
+            } else {
+                priceField.value = '';  // 清空 price 字段
+            }
+        });
+    </script>
+{% endblock %}
