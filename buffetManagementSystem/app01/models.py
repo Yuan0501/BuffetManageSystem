@@ -1,5 +1,11 @@
 from django.db import models
 
+
+class Admin(models.Model):
+    """Administration Model"""
+    username = models.CharField(verbose_name="UserName", max_length=32)
+    password = models.CharField(verbose_name="Password", max_length=64)
+
 class Department(models.Model):
     """部门表"""
     #id = models.AutoField(verbose_name='ID', primary_key=True)

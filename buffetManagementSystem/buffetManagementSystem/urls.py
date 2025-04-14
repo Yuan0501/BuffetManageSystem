@@ -47,5 +47,14 @@ urlpatterns = [
 
     path('get_price/<int:item_id>/', views.get_price, name='get_price'),
 
+    path('admin/list/', views.admin_list),
+    path('admin/add/', views.admin_add),
+    path('admin/edit/<int:nid>/', views.admin_edit),
+    path('admin/delete/<int:nid>/', views.admin_delete),
+    path('admin/reset/<int:nid>/', views.admin_reset),
+    path('login/', views.login),
+    path('logout/', views.logout),
+    path('index/', views.index),
+
 ]
 
