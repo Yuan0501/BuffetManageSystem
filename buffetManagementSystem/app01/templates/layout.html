@@ -25,23 +25,24 @@
     </div>
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
+      <ul class="nav navbar-nav">
+          <li><a href="/admin/list">Administrator</a></li>
           <li><a href="/depart/list">Department Management</a></li>
           <li><a href="/user/list">Stuff Management</a></li>
           <li><a href="/order/list/">Order Management</a></li>
-          <li><a href="/price/list/">Price Management</a></li>
-        </ul>
+          <li><a href="/price/list/">Item Management</a></li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Login</a></li>
+        <li><a href="/login/">Login</a></li>
 
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-             aria-expanded="false">Stacey <span class="caret"></span></a>
+             aria-expanded="false">{{ request.session.info.name }}<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#">Personnel Information</a></li>
             <li><a href="#">My Information</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="/logout/">Logout</a></li>
           </ul>
         </li>
       </ul>
