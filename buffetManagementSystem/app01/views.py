@@ -1,9 +1,12 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.shortcuts import render, redirect
 from django.template.defaultfilters import title
+from django.http import JsonResponse, HttpResponse
+from app01.models import Price
+from app01.utils.bootstrap import BootStrapForm
 
 from app01 import models
-from django.http import JsonResponse
-from app01.models import Price
 
 def depart_list(request):
     """Department list"""
@@ -273,6 +276,7 @@ def price_edit(request,nid):
     """pretty form edit"""
     row_object = models.Price.objects.filter(id=nid).first()
 
+
     if request.method == 'GET':
         form = PriceEditModelForm(instance=row_object)
         return render(request,'price_edit.html',{"form":form})
@@ -287,3 +291,159 @@ def price_delete(request, nid):
     """price form delete"""
     models.Price.objects.filter(id=nid).delete()
     return redirect('/price/list/')
+
+def admin_list(request):
+    """admin list"""
+
+    info = request.session.get('info')
+    if not info:
+        return redirect('/login/')
+
+    queryset = models.Admin.objects.all()
+
+
+    # context = {
+    #     'queryset': queryset,
+    # }
+    return render(request, 'admin_list.html', {"queryset":queryset})
+
+class AdminModelForm(forms.ModelForm):
+    confirm_password = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput
+    )
+    class Meta:
+        model = models.Admin
+        fields =["username","password","confirm_password"]
+        widgets = {
+            "password": forms.PasswordInput
+        }
+    # def clean_password(self):
+    #     pwd = self.cleaned_data["password"]
+    #
+    #     exists = models.Admin.objects.filter(id=self.instance.pk, password=pwd).exists()
+    #     if exists:
+    #         raise forms.ValidationError("Password can't same as before ones.")
+    #     return "999"
+
+    def clean_confirm_password(self):
+        pwd = self.cleaned_data.get("password")
+        confirm = self.cleaned_data.get("confirm_password")
+        if confirm != pwd:
+            raise ValidationError("Passwords don't match")
+        return confirm
+
+def admin_add(request):
+    """admin add"""
+    title = "New Admin"
+    if request.method == 'GET':
+        form = AdminModelForm()
+        return render(request,'change.html',{'form':form,"title": title})
+    form = AdminModelForm(data=request.POST)
+    if form.is_valid():
+        form.save()
+        return redirect('/admin/list/')
+    return render(request, 'change.html', {'form': form, "title": title})
+
+class AdminEditModelForm(forms.ModelForm):
+    class Meta:
+        model = models.Admin
+        fields = ["username"]
+
+class AdminResetModelForm(forms.ModelForm):
+    confirm_password = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput
+    )
+    class Meta:
+        model = models.Admin
+        fields = ["password", "confirm_password"]
+        widgets = {
+            "password": forms.PasswordInput(render_value=False)
+        }
+
+    def clean_confirm_password(self):
+        pwd = self.cleaned_data.get("password")
+        confirm = self.cleaned_data.get("confirm_password")
+        if confirm != pwd:
+            raise ValidationError("Passwords don't match")
+        return confirm
+
+
+def admin_edit(request, nid):
+    """admin edit"""
+
+    row_object = models.Admin.objects.filter(id=nid).first()
+    if not row_object:
+        return redirect('/admin/list/')
+
+    title = "Edit Admin"
+
+    if request.method == 'GET':
+        form = AdminEditModelForm(instance=row_object)
+        return render(request, 'change.html', {"form":form, "title": title})
+
+    form = AdminEditModelForm(data=request.POST, instance=row_object)
+    if form.is_valid():
+        form.save()
+        return redirect('/admin/list/')
+    return render(request, 'change.html', {'form': form, "title": title})
+
+def admin_delete(request, nid):
+    """admin delete"""
+    models.Admin.objects.filter(id=nid).delete()
+    return redirect('/admin/list/')
+
+def admin_reset(request, nid):
+    """admin reset"""
+    row_object = models.Admin.objects.filter(id=nid).first()
+    if not row_object:
+        return redirect('/admin/list/')
+    title = "Reset Password - {}".format(row_object.username)
+    if request.method == 'GET':
+        form = AdminResetModelForm()
+        return render(request, 'change.html', {'form': form, "title": title})
+    form = AdminResetModelForm(data=request.POST, instance=row_object)
+    if form.is_valid():
+        form.save()
+        return redirect('/admin/list/')
+    return render(request, 'change.html', {'form': form, "title": title})
+
+class LoginForm(BootStrapForm):
+    username = forms.CharField(
+        label="Username",
+        widget=forms.TextInput,
+        required=True
+    )
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput,
+        required=True
+    )
+
+def login(request):
+
+    if request.method == 'GET':
+        form = LoginForm()
+        return render(request, 'login.html', {'form': form})
+
+    form = LoginForm(data=request.POST)
+    if form.is_valid():
+        # print(form.cleaned_data)
+        admin_object = models.Admin.objects.filter(**form.cleaned_data).first()
+        if not admin_object:
+            form.add_error("username", "Username or Password is incorrect")
+            return render(request, 'login.html', {'form': form})
+
+        request.session["info"] = {'id': admin_object.id, 'name': admin_object.username}
+        return redirect('/index/')
+    return render(request, 'login.html', {'form': form})
+
+def logout(request):
+    """logout"""
+    request.session.clear()
+    return redirect('/login/')
+
+def index(request):
+    """index page"""
+    return render(request, 'index.html')
