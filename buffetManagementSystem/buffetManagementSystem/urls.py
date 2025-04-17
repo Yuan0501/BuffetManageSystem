@@ -14,47 +14,42 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# from django.contrib import admin
+from django.contrib import admin
 from django.urls import path
-from app01 import views
+
+from app01.views import depart, user, order, price, admin, index
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('depart/list/', views.depart_list),
-    path('depart/add/', views.depart_add),
+    path('depart/list/', depart.depart_list),
+    path('depart/add/', depart.depart_add),
+    path('depart/delete/', depart.depart_delete),
+    path('depart/edit/', depart.depart_edit),
+    path('depart/detail/', depart.depart_detail),
 
-    path('depart/delete/', views.depart_delete),
-    path('depart/<int:nid>/edit/', views.depart_edit),
+    path('user/list/', user.user_list),
+    path('user/add/', user.user_add),
+    path('user/model/form/add/', user.user_model_form_add),
 
-    path('user/list/', views.user_list),
+    path('order/list/', order.order_list),
+    path('order/add/', order.order_add),
+    path('order/<int:nid>/edit/', order.order_edit),
+    path('order/<int:nid>/delete/', order.order_delete),
 
-    path('user/model/form/add/', views.user_model_form_add),
-    path('user/<int:nid>/edit/', views.user_edit),
-    path('user/<int:nid>/delete/', views.user_delete),
+    path('price/list/', price.price_list),
+    path('price/add/', price.price_add),
+    path('price/<int:nid>/edit/', price.price_edit),
+    path('price/<int:nid>/delete/', price.price_delete),
+    path('get_price/<int:item_id>/', order.get_price, name='get_price'),
 
-    path('order/list/', views.order_list),
-    path('order/add/', views.order_add),
+    path('admin/list/', admin.admin_list),
+    path('admin/add/', admin.admin_add),
+    path('admin/edit/<int:nid>/', admin.admin_edit),
+    path('admin/delete/', admin.admin_delete),
+    path('admin/reset/<int:nid>/', admin.admin_reset),
 
-    path('order/<int:nid>/edit/', views.order_edit),
-
-    path('order/<int:nid>/delete/', views.order_delete),
-    path('price/list/', views.price_list),
-    path('price/add/', views.price_add),
-
-    path('price/<int:nid>/edit/', views.price_edit),
-
-    path('price/<int:nid>/delete/', views.price_delete),
-
-    path('get_price/<int:item_id>/', views.get_price, name='get_price'),
-
-    path('admin/list/', views.admin_list),
-    path('admin/add/', views.admin_add),
-    path('admin/edit/<int:nid>/', views.admin_edit),
-    path('admin/delete/<int:nid>/', views.admin_delete),
-    path('admin/reset/<int:nid>/', views.admin_reset),
-    path('login/', views.login),
-    path('logout/', views.logout),
-    path('index/', views.index),
+    path('login/', index.login),
+    path('logout/', index.logout),
+    path('index/', index.index),
 
 ]
-

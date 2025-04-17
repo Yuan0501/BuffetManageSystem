@@ -2,6 +2,9 @@
 
 {% block content %}
      <div class="container">
+        <div class="container text-center" style="margin-top: 20px; margin-bottom: 30px;">
+          <h2 style="font-weight: bold;">Order Management</h2>
+        </div>
         <div style="margin-bottom: 10px" class="clearfix">
             <a class="btn btn-success" href="/order/add/">
                 <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
@@ -61,11 +64,34 @@
                 <a class="btn btn-danger btn-xs" href="/order/{{ obj.id }}/delete/">Delete</a>
             </td>
           </tr>
+
         {% endfor %}
+
         </tbody>
 
       </table>
     </div>
+         <ul class="pagination">
+          {% if queryset.has_previous %}
+            <li><a href="?page={{ queryset.previous_page_number }}&q={{ search_data }}">«</a></li>
+          {% else %}
+            <li class="disabled"><a href="#">«</a></li>
+          {% endif %}
+
+          {% for num in queryset.paginator.page_range %}
+            {% if num == queryset.number %}
+              <li class="active"><a href="#">{{ num }}</a></li>
+            {% else %}
+              <li><a href="?page={{ num }}&q={{ search_data }}">{{ num }}</a></li>
+            {% endif %}
+          {% endfor %}
+
+          {% if queryset.has_next %}
+            <li><a href="?page={{ queryset.next_page_number }}&q={{ search_data }}">»</a></li>
+          {% else %}
+            <li class="disabled"><a href="#">»</a></li>
+          {% endif %}
+        </ul>
     </div>
 
 {% endblock %}
