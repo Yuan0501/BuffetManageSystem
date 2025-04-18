@@ -2,6 +2,9 @@
 
 {% block content %}
      <div class="container">
+        <div class="container text-center" style="margin-top: 20px; margin-bottom: 30px;">
+          <h2 style="font-weight: bold;">Order Management</h2>
+        </div>
         <div style="margin-bottom: 10px" class="clearfix">
             <a class="btn btn-success" href="/order/add/">
                 <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
@@ -58,14 +61,88 @@
 
             <td>
                 <a class="btn btn-primary btn-xs" href="/order/{{ obj.id }}/edit/">Edit</a>
-                <a class="btn btn-danger btn-xs" href="/order/{{ obj.id }}/delete/">Delete</a>
+                <input uid="{{ obj.id }}" class="btn btn-danger btn-xs btn-delete" type="button" value="Delete">
             </td>
           </tr>
+
         {% endfor %}
+
         </tbody>
 
       </table>
     </div>
-    </div>
+         <ul class="pagination">
+          {% if queryset.has_previous %}
+            <li><a href="?page={{ queryset.previous_page_number }}&q={{ search_data }}">«</a></li>
+          {% else %}
+            <li class="disabled"><a href="#">«</a></li>
+          {% endif %}
 
+          {% for num in queryset.paginator.page_range %}
+            {% if num == queryset.number %}
+              <li class="active"><a href="#">{{ num }}</a></li>
+            {% else %}
+              <li><a href="?page={{ num }}&q={{ search_data }}">{{ num }}</a></li>
+            {% endif %}
+          {% endfor %}
+
+          {% if queryset.has_next %}
+            <li><a href="?page={{ queryset.next_page_number }}&q={{ search_data }}">»</a></li>
+          {% else %}
+            <li class="disabled"><a href="#">»</a></li>
+          {% endif %}
+        </ul>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="alert alert-danger alert-dismissible fade in" role="alert">
+          <h4>Delete! Are you sure?</h4>
+          <p style="margin: 10px 0;"> It will delete all the related data!</p>
+          <p style="text-align: right">
+            <button id="btnConfirmDelete" type="button" class="btn btn-danger">Confirm</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </p>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        var DELETE_ID
+        $(function () {
+
+            bindBtnDeleteEvent();
+            bindBtnConfirmDeleteEvent();
+        })
+       
+        function bindBtnDeleteEvent() {
+
+            $(".btn-delete").click(function () {
+                $("#deleteModal").modal('show');
+
+                DELETE_ID = $(this).attr("uid");
+                console.log(DELETE_ID);
+            })
+        }
+        function bindBtnConfirmDeleteEvent(){
+            $("#btnConfirmDelete").click(function(){
+                $.ajax({
+                    url:"/order/delete/",
+                    type: "Get",
+                    data:{
+                        uid: DELETE_ID
+                    },
+                    dataType:"JSON",
+                    success: function(res){
+                        if(res.status){
+                            location.reload()
+                        }else{
+                            alert(res.error);
+                        }
+                    }
+                })
+            });
+        }
+
+    </script>
 {% endblock %}
