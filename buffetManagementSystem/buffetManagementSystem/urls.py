@@ -29,17 +29,19 @@ urlpatterns = [
 
     path('user/list/', user.user_list),
     path('user/add/', user.user_add),
-    path('user/model/form/add/', user.user_model_form_add),
+    path('user/delete/', user.user_delete),
+    path('user/edit/', user.user_edit),
+    path('user/detail/', user.user_detail),
 
     path('order/list/', order.order_list),
     path('order/add/', order.order_add),
     path('order/<int:nid>/edit/', order.order_edit),
-    path('order/<int:nid>/delete/', order.order_delete),
+    path('order/delete/', order.order_delete),
 
     path('price/list/', price.price_list),
     path('price/add/', price.price_add),
     path('price/<int:nid>/edit/', price.price_edit),
-    path('price/<int:nid>/delete/', price.price_delete),
+    path('price/delete/', price.price_delete),
     path('get_price/<int:item_id>/', order.get_price, name='get_price'),
 
     path('admin/list/', admin.admin_list),

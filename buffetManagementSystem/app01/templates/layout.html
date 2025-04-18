@@ -9,9 +9,41 @@
         .navbar{
             border-radius:0;
         }
+        .footer {
+            background-color: #ffffff;
+            color: #333;
+            padding: 30px 0;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+          }
+
+          .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+          }
+
+          .footer-links a {
+            color: #333;
+            text-decoration: none;
+            font-size: 16px;
+          }
+
+          .footer-links a:hover {
+            text-decoration: underline;
+            color: #007BFF;
+          }
+
+          .footer-copy {
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+          }
     </style>
 </head>
-<body>
+<>
 <nav class="navbar navbar-default">
     <div class="container text-center" style="margin-top: 20px; margin-bottom: 30px;">
       <h1 style="font-weight: bold;">Twin Dragon Buffet Management System</h1>
@@ -59,6 +91,20 @@
     {% block js %} {% endblock %}
 </div>
 
+<hr/>
 
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <p>&copy; Twin Dragon Buffet Management System v1.0. All rights reserved.</p>
+          <div class="footer-links">
+              <a href="index.html">Home</a>
+              <a href="about.html">About</a>
+              <a href="contact.html">Contact</a>
+          </div>
+        </div>
+      </div>
+    </footer>
 </body>
+
 </html>

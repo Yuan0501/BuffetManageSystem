@@ -6,13 +6,37 @@
           <h2 style="font-weight: bold;">Stuff Management</h2>
         </div>
         <div style="margin-bottom: 10px">
-            <a class="btn btn-success" href="/user/model/form/add/">
-                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-                New User
-            </a>
+            <input id="btnAdd" type="button" value="New Stuff" class="btn btn-success">
         </div>
-
-        <div class="panel panel-default">
+    <!-- New dialog -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">New</h4>
+          </div>
+          <div class="modal-body">
+            <form id="formAdd">
+                    <div class="clearfix">
+                        {% for field in form %}
+                            <div class="form-group">
+                                <label>{{ field.label }}</label>
+                                {{ field }}
+                                <span class="error-msg" style="color:red;">{{ field.errors.0 }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+               </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button id="btnSave" type="button" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default">
       <!-- Default panel contents -->
       <div class="panel-heading">
 
@@ -24,7 +48,7 @@
       <table class="table table-bordered">
         <thead>
           <tr>
-              <th>ID</th>
+             <th>ID</th>
               <th>UserName</th>
               <th>Password</th>
               <th>Age</th>
@@ -44,10 +68,9 @@
               <th>{{ obj.account }}</th>
               <th>{{ obj.get_gender_display }}</th>
               <th>{{ obj.department.title }}</th>
-
             <td>
-                <a class="btn btn-primary btn-xs" href="/user/{{ obj.id }}/edit/">Edit</a>
-                <a class="btn btn-danger btn-xs" href="/user/{{ obj.id }}/delete/">Delete</a>
+                <input type="button" uid="{{ obj.id }}" class="btn btn-primary btn-xs btn-edit" value="Edit">
+                <input uid="{{ obj.id }}" class="btn btn-danger btn-xs btn-delete" type="button" value="Delete">
             </td>
           </tr>
         {% endfor %}
@@ -56,4 +79,165 @@
       </table>
     </div>
     </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="alert alert-danger alert-dismissible fade in" role="alert">
+          <h4>Delete! Are you sure?</h4>
+          <p style="margin: 10px 0;"> It will delete all the related data!</p>
+          <p style="text-align: right">
+            <button id="btnConfirmDelete" type="button" class="btn btn-danger">Confirm</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </p>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        var DELETE_ID = null;
+        var EDIT_ID;
+        $(function() {
+           bindBtnAddEvent();
+           bindBtnSaveEvent();
+           bindBtnDeleteEvent();
+           bindBtnConfirmDeleteEvent();
+           bindBtnEditEvent();
+        })
+
+         function bindBtnDeleteEvent() {
+
+            $(".btn-delete").click(function () {
+                $("#deleteModal").modal('show');
+
+                DELETE_ID = $(this).attr("uid");
+                console.log(DELETE_ID);
+            })
+        }
+
+        function bindBtnConfirmDeleteEvent() {
+            $("#btnConfirmDelete").click(function () {
+                $.ajax({
+                    url: "/user/delete/",
+                    type: "Get",
+                    data: {
+                        uid: DELETE_ID
+                    },
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.status) {
+                            location.reload()
+                        } else {
+                            alert(res.error);
+                        }
+                    }
+                })
+            });
+        }
+
+        function bindBtnAddEvent(){
+            $("#btnAdd").click(function(){
+                EDIT_ID = undefined;
+                $("#formAdd")[0].reset();
+                $("#myModalLabel").text("New");
+                $('#addModal').modal('show');
+            });
+        }
+
+        function bindBtnSaveEvent() {
+            $("#btnSave").click(function () {
+
+                $(".error-msg").empty()
+                if(EDIT_ID){
+                    doEdit();
+                }else{
+                    doAdd();
+                }
+
+            });
+        }
+        function doAdd(){
+
+                $.ajax({
+                    url: "/user/add/",
+                    type: "post",
+                    data: $("#formAdd").serialize(),
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.status) {
+                            //alert("Add new record succeed!")
+                            $("#formAdd")[0].reset();
+                            $('#addModal').modal('hide');
+                            location.reload();
+                        } else {
+                            $.each(res.error, function (name, errorList) {
+                                $("#id_" + name).next().text(errorList[0])
+                            })
+                        }
+                    }
+
+                })
+        }
+
+        function doEdit(){
+            $.ajax({
+                    url: "/user/edit/" + "?uid=" + EDIT_ID,
+                    type: "post",
+                    data: $("#formAdd").serialize(),
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.status) {
+                            //alert("Add new record succeed!")
+                            $("#formAdd")[0].reset();
+                            $('#addModal').modal('hide');
+                            location.reload();
+                        } else {
+                            if(res.tips){
+                                alert(res.tips);
+                            }else{
+                                $.each(res.error, function (name, errorList) {
+                                    $("#id_" + name).next().text(errorList[0])
+                            })
+
+                            }
+
+                        }
+                    }
+
+                })
+
+        }
+
+       
+        function bindBtnEditEvent(){
+            $(".btn-edit").click(function(){
+                $("#formAdd")[0].reset();
+                var uid = $(this).attr('uid');
+                EDIT_ID = uid;
+
+                $.ajax({
+                    url: "/user/detail",
+                    type: "get",
+                    data:{
+                        uid:uid
+                    },
+                    dataType: "JSON",
+                    success: function (res){
+                        if(res.status){
+                            $.each(res.data,function(name,value){
+                                $("#id_" + name).val(value);
+                            })
+                            $("#myModalLabel").text("Edit");
+                            $('#addModal').modal('show');
+
+                        }else{
+                            alert(res.error);
+                        }
+                    }
+
+                })
+
+            });
+        }
+    </script>
 {% endblock %}
