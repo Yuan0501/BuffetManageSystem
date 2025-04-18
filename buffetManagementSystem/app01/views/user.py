@@ -6,49 +6,67 @@ from django.views.decorators.csrf import csrf_exempt
 from app01 import models
 from django.core.paginator import Paginator
 from app01.utils.form import  UserModelForm
-
-
+from app01.utils.form import DepartModelForm
 
 def user_list(request):
     """user list"""
 
     queryset = models.UserInfo.objects.all()
+    form = UserModelForm()
+    return render(request, 'user_list.html',{'form':form, "queryset":queryset})
 
-        # obj.depart_id 获取数据库中存储的那个字段
-        # obj.depart.title 根据id自动去关联的表中获取哪一行数据depart对象
-    return render(request, 'user_list.html',{"queryset":queryset})
-
+# def user_add(request):
+#     """user model form add"""
+#     if request.method == 'GET':
+#         form = UserModelForm()
+#         return render(request,'user_add.html',{"form":form})
+#     form = UserModelForm(data=request.POST)
+#     if form.is_valid():
+#         form.save()
+#         return redirect("/user/list")
+#         #print(form.cleaned_data)
+#     else:
+#         return render(request,'user_add.html',{"form":form})
+@csrf_exempt
 def user_add(request):
-    """user add"""
-    if request.method == 'GET':
-
-        context = {
-            'gender_choices': models.UserInfo.gender_choices,
-            'depart_lists': models.Department.objects.all()
-        }
-        return render(request, 'user_add.html',context)
-
-    name = request.POST.get('name')
-    pwd = request.POST.get('pwd')
-    age = request.POST.get('age')
-    account = request.POST.get('ac')
-    ctime =request.POST.get('ctime')
-    gender = request.POST.get('gd')
-    department_id = request.POST.get('dp')
-
-    models.UserInfo.objects.create(name=name, password=pwd, age=age, account=account, gender=gender, department_id=department_id)
-
-    return redirect("/user/list")
-
-def user_model_form_add(request):
     """user model form add"""
-    if request.method == 'GET':
-        form = UserModelForm()
-        return render(request,'user_model_form_add.html',{"form":form})
     form = UserModelForm(data=request.POST)
     if form.is_valid():
         form.save()
-        return redirect("/user/list")
-        #print(form.cleaned_data)
-    else:
-        return render(request,'user_model_form_add.html',{"form":form})
+        return JsonResponse({"status": True})
+
+    return JsonResponse({"status": False, 'error': form.errors})
+
+def user_delete(request):
+    uid = request.GET.get('uid')
+    exists = models.UserInfo.objects.filter(id=uid).exists()
+    if not exists:
+        return JsonResponse({"status": False, 'error': "Data is not exist"})
+
+    models.UserInfo.objects.filter(id=uid).delete()
+    return JsonResponse({"status": True})
+
+@csrf_exempt
+def user_edit(request):
+    """user edit"""
+    uid = request.GET.get('uid')
+    row_object = models.UserInfo.objects.filter(id=uid).first()
+    print(row_object)
+    if not row_object:
+        return JsonResponse({"status": False, 'tips': "Data is not exist"})
+
+    form = UserModelForm(data=request.POST, instance=row_object)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({"status": True})
+
+def user_detail(request):
+    uid = request.GET.get('uid')
+    row_dict = models.UserInfo.objects.filter(id=uid).values("id", "name", "password", "age", "account", "gender", "department").first()
+    if not row_dict:
+        return JsonResponse({"status": False, 'error': "Data is not exist"})
+    result = {
+        "status": True,
+        "data": row_dict
+    }
+    return JsonResponse(result)

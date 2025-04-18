@@ -61,7 +61,7 @@
 
             <td>
                 <a class="btn btn-primary btn-xs" href="/order/{{ obj.id }}/edit/">Edit</a>
-                <a class="btn btn-danger btn-xs" href="/order/{{ obj.id }}/delete/">Delete</a>
+                <input uid="{{ obj.id }}" class="btn btn-danger btn-xs btn-delete" type="button" value="Delete">
             </td>
           </tr>
 
@@ -93,5 +93,56 @@
           {% endif %}
         </ul>
     </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="alert alert-danger alert-dismissible fade in" role="alert">
+          <h4>Delete! Are you sure?</h4>
+          <p style="margin: 10px 0;"> It will delete all the related data!</p>
+          <p style="text-align: right">
+            <button id="btnConfirmDelete" type="button" class="btn btn-danger">Confirm</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </p>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        var DELETE_ID
+        $(function () {
 
+            bindBtnDeleteEvent();
+            bindBtnConfirmDeleteEvent();
+        })
+       
+        function bindBtnDeleteEvent() {
+
+            $(".btn-delete").click(function () {
+                $("#deleteModal").modal('show');
+
+                DELETE_ID = $(this).attr("uid");
+                console.log(DELETE_ID);
+            })
+        }
+        function bindBtnConfirmDeleteEvent(){
+            $("#btnConfirmDelete").click(function(){
+                $.ajax({
+                    url:"/order/delete/",
+                    type: "Get",
+                    data:{
+                        uid: DELETE_ID
+                    },
+                    dataType:"JSON",
+                    success: function(res){
+                        if(res.status){
+                            location.reload()
+                        }else{
+                            alert(res.error);
+                        }
+                    }
+                })
+            });
+        }
+
+    </script>
 {% endblock %}

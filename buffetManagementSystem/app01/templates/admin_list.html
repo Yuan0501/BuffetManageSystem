@@ -83,34 +83,11 @@
         var DELETE_ID
         $(function () {
 
-            bindBtnAddEvent();
             bindBtnDeleteEvent();
             bindBtnConfirmDeleteEvent();
         })
 
-        function bindBtnAddEvent() {
-
-            $("#btnAdd").click(function () {
-                $(".error-msg").empty()
-                $.ajax({
-                    url: "/Admin/add/",
-                    type: "post",
-                    data: $("#formAdd").serialize(),
-                    dataType: "JSON",
-                    success: function(res){
-                        if (res.status){
-                            alert("Add new succeed")
-                        }else{
-                            res.error
-                            $.each(res.error,function(name,data){
-                                //console.log(name,data);
-                                $("#id_" + name).next().text(data[0]);
-                            })
-                        }
-                    }
-                })
-             })
-        }
+       
         function bindBtnDeleteEvent() {
 
             $(".btn-delete").click(function () {

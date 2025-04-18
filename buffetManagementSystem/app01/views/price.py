@@ -11,18 +11,29 @@ from app01.utils.form import PriceModelForm, PriceEditModelForm
 
 def price_list(request):
     """price list"""
-
-    data_dict = {}
-    search_data = request.GET.get('q',"")
+    search_data = request.GET.get("q", "")
+    queryset = models.Price.objects.all()
     if search_data:
-        data_dict["item__in"] = [
-            price[0] for price in models.Price.item_choices
-            if search_data.lower() in price[1].lower()  # 匹配输入的字符串
-        ]
+        queryset = queryset.filter(tableNum__contains=search_data)
 
-    queryset = models.Price.objects.filter(**data_dict).order_by("id")
+    paginator = Paginator(queryset, 10)  # 每页 10 条
+    page = request.GET.get("page")
+    page_obj = paginator.get_page(page)
 
-    return render(request, 'price_list.html', {"queryset":queryset, "search_data":search_data})
+    return render(request, 'price_list.html', {
+        "queryset": page_obj,  # 注意：这里要传的是 page_obj
+        "search_data": search_data
+    })
+
+    # data_dict = {}
+    # search_data = request.GET.get('q',"")
+    # if search_data:
+    #     data_dict["item__in"] = [
+    #         price[0] for price in models.Price.item_choices
+    #         if search_data.lower() in price[1].lower()  # 匹配输入的字符串
+    #     ]
+    #
+    # return render(request, 'price_list.html', {"queryset":queryset, "search_data":search_data})
 
 def price_add(request):
     """price form add"""
@@ -51,7 +62,12 @@ def price_edit(request,nid):
     else:
         return render(request,'price_edit.html', {"form": form})
 
-def price_delete(request, nid):
+def price_delete(request):
     """price form delete"""
-    models.Price.objects.filter(id=nid).delete()
-    return redirect('/price/list/')
+    uid = request.GET.get('uid')
+    exists = models.Price.objects.filter(id=uid).exists()
+    if not exists:
+        return JsonResponse({"status": False, 'error': "Data is not exist"})
+
+    models.Price.objects.filter(id=uid).delete()
+    return JsonResponse({"status": True})

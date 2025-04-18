@@ -24,66 +24,6 @@ def order_list(request):
         "search_data": search_data
     })
 
-    #
-    # data_dict = {}
-    # search_data = request.GET.get('q',"")
-    # if search_data:
-    #     data_dict["tableNum"] = search_data
-    #
-    #
-    # page = int(request.GET.get('page', 1))
-    # page_size = 10
-    # start = (page - 1) * page_size
-    # end = start * page_size
-    #
-    #
-    # queryset = models.Order.objects.filter(**data_dict).order_by("id")[start:end]
-    # total_count = models.Order.objects.filter(**data_dict).order_by("id").count()
-    # total_page_count, div = divmod(total_count, page_size)
-    # if div:
-    #     total_page_count += 1
-    #     plus = 5
-    #     if total_page_count <= 2 * plus + 1:
-    #         start_page = 1
-    #         end_page = total_page_count
-    #     else:
-    #         if page <= plus:
-    #             start_page = 1
-    #             end_page = 2 * plus + 1
-    #         else:
-    #             if (page + plus) > total_page_count:
-    #                 start_page = total_page_count - 2 * plus
-    #                 end_page = total_page_count
-    #             else:
-    #                 start_page = page - plus
-    #                 end_page = page + plus
-    #
-    # page_str_list = []
-    # page_str_list.append('<li><a href="page={}">First</a></li>').format(1)
-    # if page > 1:
-    #     prev = '<li><a href="page={}">Previous</a></li>'.format(page - 1)
-    # else:
-    #     prev = '<li><a href="page={}">Previous</a></li>'.format(1)
-    # page_str_list.append(prev)
-    # for i in range(start_page, end_page + 1):
-    #     if i == page:
-    #         ele = '<li class="active"><a href="page={}"><{}/a></li>'.format(i,i)
-    #     else:
-    #         ele = '<li><a href="page={}">{}</a></li>'.format(i, i)
-    #     page_str_list.append(ele)
-    # if page < total_page_count:
-    #     prev = '<li><a href="page={}">Next</a></li>'.format(page + 1)
-    # else:
-    #     prev = '<li><a href="page={}">Next</a></li>'.format(total_page_count)
-    # page_str_list.append(prev)
-    # page_str_list.append('<li><a href="page={}">Last</a></li>').format(total_page_count)
-    # page_string = mark_safe("".join(page_str_list))
-    #
-    #
-    # return render(request, 'order_list.html', {"queryset":queryset, "search_data":search_data})
-    #
-
-
 def order_add(request):
     """Order form add"""
     if request.method == 'GET':
@@ -119,7 +59,14 @@ def order_edit(request,nid):
     else:
         return render(request,'order_edit.html', {"form": form})
 
-def order_delete(request, nid):
+def order_delete(request):
     """order form delete"""
-    models.Order.objects.filter(id=nid).delete()
-    return redirect('/order/list/')
+    uid = request.GET.get('uid')
+    exists = models.Order.objects.filter(id=uid).exists()
+    if not exists:
+        return JsonResponse({"status": False, 'error': "Data is not exist"})
+
+    models.Order.objects.filter(id=uid).delete()
+    return JsonResponse({"status": True})
+
+
