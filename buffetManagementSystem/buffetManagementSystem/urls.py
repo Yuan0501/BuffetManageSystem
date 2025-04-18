@@ -53,5 +53,7 @@ urlpatterns = [
     path('login/', index.login),
     path('logout/', index.logout),
     path('index/', index.index),
+    path('about/', index.about),
+    path('contact/', index.contact),
 
 ]
