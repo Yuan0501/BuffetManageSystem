@@ -15,18 +15,6 @@ def user_list(request):
     form = UserModelForm()
     return render(request, 'user_list.html',{'form':form, "queryset":queryset})
 
-# def user_add(request):
-#     """user model form add"""
-#     if request.method == 'GET':
-#         form = UserModelForm()
-#         return render(request,'user_add.html',{"form":form})
-#     form = UserModelForm(data=request.POST)
-#     if form.is_valid():
-#         form.save()
-#         return redirect("/user/list")
-#         #print(form.cleaned_data)
-#     else:
-#         return render(request,'user_add.html',{"form":form})
 @csrf_exempt
 def user_add(request):
     """user model form add"""

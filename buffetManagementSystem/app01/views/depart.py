@@ -1,10 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
-from app01.models import Price
-import json
 from django.views.decorators.csrf import csrf_exempt
 from app01 import models
-from django.core.paginator import Paginator
 from app01.utils.form import DepartModelForm
 
 def depart_list(request):

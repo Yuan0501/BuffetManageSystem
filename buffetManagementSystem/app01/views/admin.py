@@ -1,8 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from app01.models import Price
-import json
-from django.views.decorators.csrf import csrf_exempt
 from app01 import models
 from django.core.paginator import Paginator
 from app01.utils.form import AdminModelForm, AdminEditModelForm, AdminResetModelForm
@@ -16,10 +13,6 @@ def admin_list(request):
 
     queryset = models.Admin.objects.all()
 
-
-    # context = {
-    #     'queryset': queryset,
-    # }
     return render(request, 'admin_list.html', {"queryset":queryset})
 
 def admin_add(request):

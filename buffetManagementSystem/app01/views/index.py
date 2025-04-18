@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from app01 import models
 from app01.utils.form import LoginForm
+from app01.views import index
 
 def login(request):
 
@@ -28,3 +29,11 @@ def logout(request):
 def index(request):
     """index page"""
     return render(request, 'index.html')
+
+def about(request):
+    """index page"""
+    return render(request, 'about.html')
+
+def contact(request):
+    """index page"""
+    return render(request, 'contact.html')

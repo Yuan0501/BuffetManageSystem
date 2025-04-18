@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from app01.models import Price
-import json
-from django.views.decorators.csrf import csrf_exempt
 from app01 import models
 from django.core.paginator import Paginator
 from app01.utils.form import OrderModelForm, OrderEditModelForm
@@ -15,12 +13,12 @@ def order_list(request):
     if search_data:
         queryset = queryset.filter(tableNum__contains=search_data)
 
-    paginator = Paginator(queryset, 10)  # 每页 10 条
+    paginator = Paginator(queryset, 10)
     page = request.GET.get("page")
     page_obj = paginator.get_page(page)
 
     return render(request, 'order_list.html', {
-        "queryset": page_obj,  # 注意：这里要传的是 page_obj
+        "queryset": page_obj,
         "search_data": search_data
     })
 
@@ -32,7 +30,7 @@ def order_add(request):
 
     form = OrderModelForm(data=request.POST)
     if form.is_valid():
-        print(form.cleaned_data)
+        # print(form.cleaned_data)
         form.save()  # The form already has the correct Price instance assigned to `price`.
         return redirect("/order/list")
     else:

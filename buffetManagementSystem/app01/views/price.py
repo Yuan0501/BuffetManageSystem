@@ -1,8 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
-from app01.models import Price
-import json
-from django.views.decorators.csrf import csrf_exempt
 from app01 import models
 from django.core.paginator import Paginator
 from app01.utils.form import PriceModelForm, PriceEditModelForm
@@ -21,19 +18,9 @@ def price_list(request):
     page_obj = paginator.get_page(page)
 
     return render(request, 'price_list.html', {
-        "queryset": page_obj,  # 注意：这里要传的是 page_obj
+        "queryset": page_obj,
         "search_data": search_data
     })
-
-    # data_dict = {}
-    # search_data = request.GET.get('q',"")
-    # if search_data:
-    #     data_dict["item__in"] = [
-    #         price[0] for price in models.Price.item_choices
-    #         if search_data.lower() in price[1].lower()  # 匹配输入的字符串
-    #     ]
-    #
-    # return render(request, 'price_list.html', {"queryset":queryset, "search_data":search_data})
 
 def price_add(request):
     """price form add"""
