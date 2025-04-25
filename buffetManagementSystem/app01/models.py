@@ -71,16 +71,16 @@ class Price(models.Model):
         return f"{self.get_item_display()} - {self.itemPrice}"
 
 
-class Order(models.Model):
-    """Order Table"""
-    tableNum = models.IntegerField(verbose_name='TableNum')
-    serverId = models.ForeignKey(to="UserInfo", to_field="id", on_delete=models.CASCADE, default=1)
-    item = models.ForeignKey(to="Price", on_delete=models.CASCADE, related_name='orders_as_item')
-    itemNum = models.IntegerField(verbose_name="ItemNumber", default=0)
+# class Order(models.Model):
+#     """Order Table"""
+#     tableNum = models.IntegerField(verbose_name='TableNum')
+#     serverId = models.ForeignKey(to="UserInfo", to_field="id", on_delete=models.CASCADE, default=1)
+#     item = models.ForeignKey(to="Price", on_delete=models.CASCADE, related_name='orders_as_item')
+#     itemNum = models.IntegerField(verbose_name="ItemNumber", default=0)
 
-    status_choices = (
-        (1, "unpaid"),
-        (2, "paid")
-    )
-    status = models.SmallIntegerField(verbose_name='Status', choices=status_choices, default=1)
+#     status_choices = (
+#         (1, "unpaid"),
+#         (2, "paid")
+#     )
+#     status = models.SmallIntegerField(verbose_name='Status', choices=status_choices, default=1)
 
