@@ -29,51 +29,51 @@ class UserModelForm(forms.ModelForm):
             for name,field in self.fields.items():
                 field.widget.attrs={"class":"form-control", "placeholder":field.label}
 
-class OrderModelForm(forms.ModelForm):
-    # 使用 ModelChoiceField 来实现 item 下拉选择
-    item = forms.ModelChoiceField(
-        queryset=models.Price.objects.all(),
-        empty_label="Select Item",  # 下拉列表中的默认选项
-        widget=forms.Select(attrs={'class': 'form-control'})  # 添加样式
-    )
+# class OrderModelForm(forms.ModelForm):
+#     # 使用 ModelChoiceField 来实现 item 下拉选择
+#     item = forms.ModelChoiceField(
+#         queryset=models.Price.objects.all(),
+#         empty_label="Select Item",  # 下拉列表中的默认选项
+#         widget=forms.Select(attrs={'class': 'form-control'})  # 添加样式
+#     )
 
-    # price 字段应该显示选择的 item 的价格，而不是另一个下拉框
-    price = forms.DecimalField(
-        label="Price",
-        max_digits=10,
-        decimal_places=2,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
-    )
+#     # price 字段应该显示选择的 item 的价格，而不是另一个下拉框
+#     price = forms.DecimalField(
+#         label="Price",
+#         max_digits=10,
+#         decimal_places=2,
+#         widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
+#     )
 
-    class Meta:
-        model = models.Order
-        fields = ['tableNum','serverId', 'item', 'itemNum', 'price', 'status']  # 只选择相关字段
+#     class Meta:
+#         model = models.Order
+#         fields = ['tableNum','serverId', 'item', 'itemNum', 'price', 'status']  # 只选择相关字段
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for name, field in self.fields.items():
-            field.widget.attrs.update({"class": "form-control", "placeholder": field.label})
-
-
-        if 'item' in self.data:
-            try:
-                item_id = int(self.data.get('item'))
-                item = models.Price.objects.get(id=item_id)
-                self.fields['price'].initial = item.itemPrice
-            except (ValueError, models.Price.DoesNotExist):
-                pass
-
-class OrderEditModelForm(forms.ModelForm):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         for name, field in self.fields.items():
+#             field.widget.attrs.update({"class": "form-control", "placeholder": field.label})
 
 
-    class Meta:
-        model = models.Order
-        fields = ["tableNum","serverId", "item","itemNum","status"]
+#         if 'item' in self.data:
+#             try:
+#                 item_id = int(self.data.get('item'))
+#                 item = models.Price.objects.get(id=item_id)
+#                 self.fields['price'].initial = item.itemPrice
+#             except (ValueError, models.Price.DoesNotExist):
+#                 pass
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for name, field in self.fields.items():
-            field.widget.attrs = {"class": "form-control", "placeholder": field.label}
+# class OrderEditModelForm(forms.ModelForm):
+
+
+#     class Meta:
+#         model = models.Order
+#         fields = ["tableNum","serverId", "item","itemNum","status"]
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         for name, field in self.fields.items():
+#             field.widget.attrs = {"class": "form-control", "placeholder": field.label}
 
 class PriceModelForm(forms.ModelForm):
     # mobile = forms.CharField(

@@ -1,0 +1,64 @@
+{% extends 'layout_new.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="text-center my-4">
+    <h2 class="fw-bold">Order Management</h2>
+  </div>
+
+  <div class="clearfix mb-3">
+    <a class="btn btn-success" href="{% url 'order_create' %}">
+      <span class="glyphicon glyphicon-plus-sign"></span>
+      New Order
+    </a>
+    <div class="pull-right" style="width:300px">
+      <form method="get">
+        <div class="input-group">
+          <input type="text"
+                 name="q"
+                 class="form-control"
+                 placeholder="Table Number"
+                 value="{{ search_data }}">
+         <span class="input-group-btn">
+           <button class="btn btn-default" type="submit">
+             <span class="glyphicon glyphicon-search"></span>
+           </button>
+         </span> 
+         
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel panel-default"  style="margin-top: 20px;">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-th"></span>
+      Order List
+    </div>
+    <table class="table table-bordered mb-0">
+      <thead>
+        <tr>
+          <th>Table Number</th>
+          <th>Server Name</th>
+          <th>Total Price</th>
+          <th>Order Time</th>
+        </tr>
+      </thead>
+      <tbody> 
+        {% for order in orders %}
+        <tr>
+          <td>{{ order.tableNum }}</td>
+          <td>{{ order.server.name }}</td>
+          <td>{{ order.compute_total_price }}</td>
+          <td>{{ order.order_time|date:"m-d-Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center">No order</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

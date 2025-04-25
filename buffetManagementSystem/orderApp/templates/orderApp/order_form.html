@@ -1,0 +1,183 @@
+{% extends 'layout_new.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="text-center my-4">
+    <h2 class="fw-bold">New Order</h2>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-pencil"></span>
+      Order Details
+    </div>
+    <div class="panel-body">
+      <form method="post" id="order-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="form-group mb-4 d-flex align-items-center">
+           
+            <label for="tableNumInput" class="me-2 mb-0">
+                {{ form.tableNum.label }}
+            </label>
+              {{ form.tableNum }}
+        </div>
+
+        <div class="form-group mb-4 d-flex align-items-center">
+          <label for="serverSelect" class="me-2 mb-0">
+            {{ form.server.label }}
+          </label>
+          {{ form.server }}
+        </div>
+
+        {{ formset.management_form }}
+        <h4>Items</h4>
+        <table class="table table-bordered" id="items-table">
+          <thead>
+            <tr>
+              <th>Select Items</th>
+              <th style="width: 80px;">delete</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for subform in formset.forms %}
+            <tr class="item-row">
+              <td>
+                <select name="{{ subform.prefix }}-item"
+                        class="form-control item-select">
+                    <option value="">---------</option>
+                    {% for p in prices %}
+                    <option value="{{ p.id }}" data-price="{{ p.itemPrice }}">
+                        {% if subform.instance.item_id == p.id %}selected{% endif %}
+                      {{ p.get_item_display }} — ${{ p.itemPrice }}
+                    </option>
+                    {% endfor %}
+                </select>
+              </td>
+
+              <td class="text-center">
+                {% if subform.instance.pk %}
+                  <input type="checkbox"
+                         name="{{ subform.prefix }}-DELETE" />
+                {% else %}
+                  <button type="button"
+                          class="btn btn-danger btn-xs remove-item">
+                    delete
+                  </button>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+          <!-- <tbody data-empty-form="{{formset.empty_form|escapejs}}">
+            {% for subform in formset.forms %}
+             <tr class="item-row">
+              
+                {{subform.id}}
+                {{subform.item}}
+                {{subform.DELETE}}
+                <button type="button" class="btn btn-danger btn-xs remove-item">
+                  delete
+                </button>
+              
+             </tr>
+             {% endfor %}
+          </tbody> -->
+
+        </table>
+
+        <div class="mb-3">
+          <button type="button"
+                  class="btn btn-secondary btn-sm"
+                  id="add-item">
+            <span class="glyphicon glyphicon-plus"></span> Add Items
+          </button>
+        </div>
+
+        <div class="mb-3">
+          <strong>Total: $<span id="total-price">0.00</span></strong>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-success">
+            <span class="glyphicon glyphicon-ok"></span> Submit
+          </button>
+          <a href="{% url 'order_list' %}" class="btn btn-default">
+            <span class="glyphicon glyphicon-remove"></span> Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+$(function(){
+  // 1. total price calculation
+  function updateTotal(){
+    let total = 0;
+    $('.item-select option:selected').each(function(){
+      const p = parseFloat($(this).data('price')||0);
+      if (!isNaN(p)) total += p;
+    });
+    $('#total-price').text(total.toFixed(2));
+  }
+  $('#items-table').on('change', '.item-select', updateTotal);
+
+  // 2. add rows
+  $('#add-item').click(function(){
+    const idx = +$('#id_form-TOTAL_FORMS').val();
+    const options = `
+      <option value="">---------</option>
+      {% for p in prices %}
+      <option value="{{ p.id }}" data-price="{{ p.itemPrice }}">
+        {{ p.get_item_display }} — {{ p.itemPrice }}
+      </option>
+      {% endfor %}
+    `;
+    $('#items-table tbody').append(`
+      <tr class="item-row">
+        <td>
+          <input type="hidden"
+                  name="form-${idx}-id"
+                  id="id_form-${idx}-id"
+                  value="">
+          <select name="form-${idx}-item"
+                    class="form-control item-select">
+              ${options}
+            </select></td>
+        <td class="text-center">
+          <button type="button" class="btn btn-danger btn-xs remove-item">
+            delete
+          </button>
+        </td>
+      </tr>`);
+    $('#id_form-TOTAL_FORMS').val(idx + 1);
+  });
+
+  // $('#add-item').click(function(){
+  //   console.log('add-item clicked');
+  //   const $tbody = $('#items-table tbody');
+  //   let tmpl = $tbody.data('empty-form');
+  //   const idx = parseInt($('#id_form-TOTAL_FORMS').val(), 10)
+
+  //   const rowHtml = tmpl.replace(/__prefix__/g, idx);
+  //   $tbody.append(`<tr class="item-row">${rowHtml}</tr>`);
+
+  //   $('#id_form-TOTAL_FORMS').val(idx + 1);
+  // });
+
+// remove rows
+  $('#items-table').on('click', '.remove-item', function(){
+    $(this).closest('tr').remove();
+    updateTotal();
+  });
+
+});
+</script>
+{% endblock %}
