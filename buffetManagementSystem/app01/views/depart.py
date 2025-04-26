@@ -16,12 +16,7 @@ def depart_add(request):
     form = DepartModelForm(data=request.POST)
     if form.is_valid():
 
-        # 额外增加一些不是用户输入的值（自己计算出来）
-        # form.instance.oid = datetime.now().strftime("%Y%m%d%H%M%S) + str(random.randint(1000,9999)
 
-        # 固定设置管理员ID
-
-        # form.instance.admin_id = request.session["info"]["id"] #当前登录系统管理员的ID
         form.save()
         return JsonResponse({"status": True})
 
@@ -29,12 +24,7 @@ def depart_add(request):
 
 def depart_delete(request):
     """department delete"""
-    # # 获取ID
-    # nid = request.GET.get('nid')
-    # # 删除
-    # models.Department.objects.filter(id=nid).delete()
-    # # 重定向回部门列表
-    # return redirect("/depart/list")
+
 
     uid = request.GET.get('uid')
     exists = models.Department.objects.filter(id=uid).exists()

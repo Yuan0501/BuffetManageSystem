@@ -19,15 +19,15 @@ from django.shortcuts import render
 from django.db.models.functions import ExtractHour
 
 def chart_list(request):
-    # 获取两个不同的日期筛选参数
+
     date_filter = request.GET.get('date')
     graph_filter = request.GET.get('graph_date')
 
-    # 获取所有订单（或按日期过滤）
+
     sales_data = Order_new.objects.all()
     bar_data = Order_new.objects.all()
 
-    # 日期格式正确性处理
+
     if date_filter:
         try:
             filter_date = datetime.strptime(date_filter, '%Y-%m-%d').date()
@@ -42,10 +42,10 @@ def chart_list(request):
         except ValueError:
             pass
 
-    # Server sales 数据
+
     data = sales_data.values('server__name').annotate(sales=Sum('total_price'))
 
-    # Bar graph 数据（按小时汇总）
+
     hourly_sales = (
         bar_data.annotate(hour=ExtractHour('order_time'))
         .values('hour')
@@ -59,7 +59,7 @@ def chart_list(request):
         for item in hourly_sales
     ]
 
-    # 所有订单的唯一日期（用于下拉列表）
+
     order_dates = Order_new.objects.dates('order_time', 'day')
     graph_dates = order_dates  # 同样日期来源
 
