@@ -17,7 +17,7 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path
 
-from app01.views import depart, user, price,index,admin
+from app01.views import depart, user, price, index, admin, chart
 from orderApp.views import OrderListView, OrderCreateView, add_price
 
 
@@ -61,5 +61,7 @@ urlpatterns = [
     path('orders/', OrderListView.as_view(), name='order_list'),
     path('orders/new/', OrderCreateView.as_view(), name='order_create'),
     path('prices/add/',add_price, name='add_price'),
+
+    path('chart/list/', chart.chart_list, name='chart_list'),
 
 ]
