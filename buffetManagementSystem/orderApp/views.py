@@ -30,7 +30,6 @@ class OrderCreateView(View):
     
     def post(self, request):
         form = OrderForm(request.POST)
-        # formset = OrderItemFormSet(request.POST, instance=order, prefix='form')
         if form.is_valid():
             order = form.save(commit=False)
             order.serverId = request.user  # Assuming you have a user logged in
@@ -40,22 +39,6 @@ class OrderCreateView(View):
                 formset.save()
                 order.update_total_price()
                 return redirect('order_list')
-
-            # for item_form in formset:
-            #     cd= item_form.cleaned_data
-            #     if not cd or cd.get('DELETE'):
-            #         continue
-            #     price_obj = cd['item']
-            #     order_item = item_form.save(commit=False)
-            #     order_item.order = order
-            #     order_item.item = price_obj
-            #     order_item.save()
-            #     total_price += float(price_obj.itemPrice)
-
-            # order.total_price = total_price
-            # order.save()
-
-            # return redirect('order_list')
         
         prices = Price.objects.all()
         formset = OrderItemFormSet(request.POST, prefix='form')
