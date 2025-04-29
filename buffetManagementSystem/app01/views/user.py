@@ -50,7 +50,7 @@ def user_edit(request):
 
 def user_detail(request):
     uid = request.GET.get('uid')
-    row_dict = models.UserInfo.objects.filter(id=uid).values("id", "name", "password", "age", "account", "gender", "department").first()
+    row_dict = models.UserInfo.objects.filter(id=uid).values("id", "name",  "age", "account", "gender", "department").first()
     if not row_dict:
         return JsonResponse({"status": False, 'error': "Data is not exist"})
     result = {

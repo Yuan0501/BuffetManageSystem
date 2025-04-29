@@ -13,7 +13,7 @@ class UserModelForm(forms.ModelForm):
     #name = forms.CharField(min_length=3, label="name")
     class Meta:
         model = models.UserInfo
-        fields = ['name', 'password','age', 'account', 'gender', 'department']
+        fields = ['name','age', 'account', 'gender', 'department']
         # widgets = {
         #     "name": forms.TextInput(attrs={'class':'form-control', "placeholder":"name"}),
         #     "password": forms.PasswordInput(attrs={'class':'form-control',"placeholder":"password"}),

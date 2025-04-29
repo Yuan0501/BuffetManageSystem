@@ -3,10 +3,10 @@
 {% block content %}
     <div class="container">
         <div class="container text-center" style="margin-top: 20px; margin-bottom: 30px;">
-          <h2 style="font-weight: bold;">Stuff Management</h2>
+          <h2 style="font-weight: bold;">Staff Management</h2>
         </div>
         <div style="margin-bottom: 10px">
-            <input id="btnAdd" type="button" value="New Stuff" class="btn btn-success">
+            <input id="btnAdd" type="button" value="New Staff" class="btn btn-success">
         </div>
     <!-- New dialog -->
     <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -50,7 +50,7 @@
           <tr>
              <th>ID</th>
               <th>UserName</th>
-              <th>Password</th>
+              <!-- <th>Password</th> -->
               <th>Age</th>
               <th>Account</th>
               <th>Gender</th>
@@ -63,7 +63,7 @@
           <tr>
               <th>{{ obj.id }}</th>
               <th>{{ obj.name }}</th>
-              <th>{{ obj.password }}</th>
+              <!-- <th>{{ obj.password }}</th> -->
               <th>{{ obj.age}}</th>
               <th>{{ obj.account }}</th>
               <th>{{ obj.get_gender_display }}</th>
